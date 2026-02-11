@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Meus Endereços - STORE{% endblock %}
+
+{% block content %}
+<main>
+  <div class="container">
+
+    <!-- BREADCRUMB -->
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="{% url 'home' %}">Início</a>
+      <span class="breadcrumb-sep">/</span>
+      <span>Endereços</span>
+    </nav>
+
+    <div class="page-title">
+      <h1>Meus Endereços</h1>
+      <p>Gerencie seus endereços de entrega</p>
+    </div>
+
+    <!-- AÇÕES -->
+    <div class="mb-3">
+      <a href="{% url 'address_create' %}" class="btn btn-accent">
+        + Novo Endereço
+      </a>
+    </div>
+
+    <!-- LISTA DE ENDEREÇOS -->
+    <div class="section">
+
+      {% if addresses %}
+        {% for address in addresses %}
+          <div class="order-card mb-2">
+
+            <div class="order-card-info">
+              <h4>
+                {{ address.label|default:"Endereço" }}
+
+                {% if address.is_default %}
+                  <span class="badge badge-confirmed" style="margin-left:8px;">
+                    Padrão
+                  </span>
+                {% endif %}
+              </h4>
+
+              <p>
+                {{ address.street }}, {{ address.number }}
+                {% if address.complement %} - {{ address.complement }}{% endif %}<br>
+                {{ address.district }} - {{ address.city }}, {{ address.state }}<br>
+                CEP: {{ address.cep }}
+              </p>
+            </div>
+
+            <div class="order-card-right" style="display:flex;gap:8px;flex-wrap:wrap;">
+
+              {% if not address.is_default %}
+                <form action="{% url 'address_set_default' address.id %}" method="post">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-outline btn-sm">
+                    Tornar padrão
+                  </button>
+                </form>
+              {% endif %}
+
+              <form action="{% url 'address_delete' address.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit"
+                        class="btn btn-outline btn-sm"
+                        onclick="return confirm('Deseja remover este endereço?')">
+                  Remover
+                </button>
+              </form>
+
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <p class="text-muted">
+          Você ainda não cadastrou nenhum endereço.
+        </p>
+      {% endif %}
+
+    </div>
+
+  </div>
+</main>
+{% endblock %}

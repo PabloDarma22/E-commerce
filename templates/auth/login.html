@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<h2>Login</h2>
+
+<form method="post">
+  {% csrf_token %}
+
+  <div>
+    <label for="id_username">Usuário</label><br>
+    <input type="text" name="username" id="id_username" required>
+  </div>
+  <br>
+
+  <div>
+    <label for="id_password">Senha</label><br>
+    <input type="password" name="password" id="id_password" required>
+  </div>
+  <br>
+
+  <button type="submit">Entrar</button>
+</form>
+
+<p>Não tem conta? <a href="{% url 'signup' %}">Cadastre-se</a></p>
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Meus Pedidos - STORE{% endblock %}
+
+{% block content %}
+<main>
+  <div class="container">
+
+    <!-- BREADCRUMB -->
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="{% url 'home' %}">Início</a>
+      <span class="breadcrumb-sep">/</span>
+      <span>Meus Pedidos</span>
+    </nav>
+
+    <div class="page-title">
+      <h1>Meus Pedidos</h1>
+      <p>Acompanhe todos os seus pedidos</p>
+    </div>
+
+    <div class="section">
+      {% for order in orders %}
+        <a href="{% url 'order_detail' order_id=order.id %}"
+           class="order-card"
+           style="text-decoration:none;color:inherit;">
+
+          <div class="order-card-info">
+            <h4>Pedido #{{ order.id }}</h4>
+            <p>
+              Realizado em {{ order.created_at|date:"d \d\e F \d\e Y" }} —
+              {{ order.items.count }} item{{ order.items.count|pluralize:",s" }}
+            </p>
+          </div>
+
+          <div class="order-card-right">
+            {# Badge por status (ajuste as classes conforme seu CSS) #}
+            {% if order.status == order.Status.PAID %}
+              <span class="badge badge-confirmed">Pago</span>
+            {% elif order.status == order.Status.PENDING %}
+              <span class="badge badge-pending">Pendente</span>
+            {% elif order.status == order.Status.CANCELLED %}
+              <span class="badge badge-cancelled">Cancelado</span>
+            {% elif order.status == order.Status.SHIPPED %}
+              <span class="badge badge-shipped">Enviado</span>
+            {% elif order.status == order.Status.DELIVERED %}
+              <span class="badge badge-delivered">Entregue</span>
+            {% else %}
+              <span class="badge">{{ order.get_status_display }}</span>
+            {% endif %}
+
+            <span class="order-total">R$ {{ order.total }}</span>
+          </div>
+
+        </a>
+      {% empty %}
+        <p>Você ainda não possui pedidos.</p>
+        <p><a class="btn btn-outline" href="{% url 'home' %}">Ir para a loja</a></p>
+      {% endfor %}
+    </div>
+
+    <!-- PAGINATION -->
+    {% if is_paginated %}
+      <nav class="pagination">
+        {% if page_obj.has_previous %}
+          <a href="?page={{ page_obj.previous_page_number }}" aria-label="Página anterior">&laquo;</a>
+        {% else %}
+          <a href="#" class="disabled" aria-disabled="true" aria-label="Página anterior">&laquo;</a>
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+          {% if num == page_obj.number %}
+            <span class="active">{{ num }}</span>
+          {% else %}
+            <a href="?page={{ num }}">{{ num }}</a>
+          {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+          <a href="?page={{ page_obj.next_page_number }}" aria-label="Próxima página">&raquo;</a>
+        {% else %}
+          <a href="#" class="disabled" aria-disabled="true" aria-label="Próxima página">&raquo;</a>
+        {% endif %}
+      </nav>
+    {% endif %}
+
+  </div>
+</main>
+{% endblock %}

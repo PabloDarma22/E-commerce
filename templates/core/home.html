@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Home - STORE{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+
+    <div class="section-header">
+      <h2>Destaques da Loja</h2>
+      <p>Confira alguns dos nossos produtos</p>
+    </div>
+
+    <div class="product-grid">
+
+      <div class="card">
+        <img src="{% static 'img/pexels-anna-nekrashevich-8532616.jpg' %}" alt="Produto 1" class="card-img">
+        <div class="card-body">
+          <h3>Produto 1</h3>
+          <div class="card-price">R$ 59,90</div>
+          <a href="#" class="btn btn-outline btn-sm btn-block">Ver Detalhes</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <img src="{% static 'img/pexels-cottonbro-7026777.jpg' %}" alt="Produto 2" class="card-img">
+        <div class="card-body">
+          <h3>Produto 2</h3>
+          <div class="card-price">R$ 89,90</div>
+          <a href="#" class="btn btn-outline btn-sm btn-block">Ver Detalhes</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <img src="{% static 'img/pexels-deise-elen-2149983761-31406910.jpg' %}" alt="Produto 3" class="card-img">
+        <div class="card-body">
+          <h3>Produto 3</h3>
+          <div class="card-price">R$ 129,90</div>
+          <a href="#" class="btn btn-outline btn-sm btn-block">Ver Detalhes</a>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+{% endblock %}

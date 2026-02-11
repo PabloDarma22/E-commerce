@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Criar conta{% endblock %}
+
+{% block content %}
+<h2>Criar conta</h2>
+
+<form method="post">
+  {% csrf_token %}
+
+  {# Erros gerais do form (não ligados a um campo específico) #}
+  {% if form.non_field_errors %}
+    <ul>
+      {% for err in form.non_field_errors %}
+        <li>{{ err }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  {# Campos do formulário com erros exibidos #}
+  <div>
+    <label for="{{ form.username.id_for_label }}">Usuário</label><br>
+    {{ form.username }}
+    {% if form.username.errors %}
+      <ul>
+        {% for err in form.username.errors %}
+          <li>{{ err }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  </div>
+  <br>
+
+  <div>
+    <label for="{{ form.email.id_for_label }}">E-mail</label><br>
+    {{ form.email }}
+    {% if form.email.errors %}
+      <ul>
+        {% for err in form.email.errors %}
+          <li>{{ err }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  </div>
+  <br>
+
+  <div>
+    <label for="{{ form.password1.id_for_label }}">Senha</label><br>
+    {{ form.password1 }}
+    {% if form.password1.errors %}
+      <ul>
+        {% for err in form.password1.errors %}
+          <li>{{ err }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  </div>
+  <br>
+
+  <div>
+    <label for="{{ form.password2.id_for_label }}">Confirmar senha</label><br>
+    {{ form.password2 }}
+    {% if form.password2.errors %}
+      <ul>
+        {% for err in form.password2.errors %}
+          <li>{{ err }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  </div>
+  <br>
+
+  <button type="submit">Cadastrar</button>
+</form>
+
+<p>Já tem conta? <a href="{% url 'login' %}">Entrar</a></p>
+{% endblock %}

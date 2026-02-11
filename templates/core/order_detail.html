@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Pedido #{{ order.id }} - STORE{% endblock %}
+
+{% block content %}
+<main>
+  <div class="container">
+
+    <!-- BREADCRUMB -->
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="{% url 'home' %}">Início</a>
+      <span class="breadcrumb-sep">/</span>
+      <a href="{% url 'order_list' %}">Meus Pedidos</a>
+      <span class="breadcrumb-sep">/</span>
+      <span>Pedido #{{ order.id }}</span>
+    </nav>
+
+    <!-- ORDER HEADER -->
+    <div class="order-detail-header">
+      <div>
+        <h1>Pedido #{{ order.id }}</h1>
+        <div class="order-meta">
+          <span>{{ order.created_at|date:"d \d\e F \d\e Y" }}</span>
+          <span>{{ order.items.count }} item{{ order.items.count|pluralize:",s" }}</span>
+        </div>
+      </div>
+
+      <span class="badge badge-{{ order.status }}">
+        {{ order.get_status_display }}
+      </span>
+    </div>
+
+    <div class="order-detail-grid">
+
+      <!-- LEFT: ITEMS + ADDRESS -->
+      <div>
+
+        <!-- ITEMS -->
+        <div class="order-detail-card mb-3">
+          <h3>Itens do Pedido</h3>
+
+          <table class="order-items-table">
+            <thead>
+              <tr>
+                <th>Produto</th>
+                <th>Preço Unit.</th>
+                <th>Qtd</th>
+                <th>Subtotal</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in order.items.all %}
+                <tr>
+                  <td>
+                    <div class="cart-item-info">
+                      {% if item.product.image %}
+                        <img src="{{ item.product.image.url }}"
+                             alt="{{ item.product.name }}"
+                             class="cart-item-img"
+                             style="width:48px;height:48px;">
+                      {% else %}
+                        <img src="{% static 'img/placeholder.jpg' %}"
+                             alt="{{ item.product.name }}"
+                             class="cart-item-img"
+                             style="width:48px;height:48px;">
+                      {% endif %}
+
+                      <div>
+                        <div class="cart-item-name">{{ item.product.name }}</div>
+                        {% if item.product.category %}
+                          <div class="cart-item-category">
+                            {{ item.product.category.name }}
+                          </div>
+                        {% endif %}
+                      </div>
+                    </div>
+                  </td>
+
+                  <td>R$ {{ item.unit_price }}</td>
+                  <td>{{ item.quantity }}</td>
+                  <td class="fw-semibold">R$ {{ item.subtotal }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <!-- DELIVERY ADDRESS -->
+        <div class="order-detail-card">
+          <h3>Endereço de Entrega</h3>
+          <p style="font-size:0.9rem;line-height:1.7;">
+            <strong>{{ order.address.label|default:"Endereço" }}</strong><br>
+            {{ order.address.street }}, {{ order.address.number }}
+            {% if order.address.complement %} - {{ order.address.complement }}{% endif %}<br>
+            {{ order.address.district }} - {{ order.address.city }}, {{ order.address.state }}<br>
+            CEP: {{ order.address.cep }}
+          </p>
+        </div>
+      </div>
+
+      <!-- RIGHT: SUMMARY + PAYMENT -->
+      <div>
+
+        <!-- SUMMARY -->
+        <div class="cart-summary mb-3">
+          <h3>Resumo</h3>
+
+          <div class="summary-row">
+            <span>Subtotal</span>
+            <span>R$ {{ order.total }}</span>
+          </div>
+
+          <div class="summary-row">
+            <span>Frete</span>
+            <span class="text-success">Grátis</span>
+          </div>
+
+          <div class="summary-row total">
+            <span>Total</span>
+            <span>R$ {{ order.total }}</span>
+          </div>
+        </div>
+
+        <!-- PAYMENT INFO -->
+        <div class="payment-info">
+          <h3>Pagamento</h3>
+
+          {% if order.payment %}
+            <div class="payment-detail-row">
+              <span class="label">Status</span>
+              <span class="badge badge-{{ order.payment.status }}">
+                {{ order.payment.get_status_display }}
+              </span>
+            </div>
+
+            <div class="payment-detail-row">
+              <span class="label">Método</span>
+              <span class="fw-semibold">
+                {{ order.payment.get_method_display }}
+              </span>
+            </div>
+
+            {% if order.payment.paid_at %}
+              <div class="payment-detail-row">
+                <span class="label">Data Pagamento</span>
+                <span>{{ order.payment.paid_at|date:"d/m/Y" }}</span>
+              </div>
+            {% endif %}
+          {% else %}
+            <p class="text-muted">Pagamento ainda não iniciado.</p>
+          {% endif %}
+        </div>
+
+        <!-- SIMULATE PAYMENT -->
+        {% if order.status == order.Status.PENDING %}
+          <div class="mt-2">
+            <form action="{% url 'order_pay' order_id=order.id %}" method="post">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-accent btn-block btn-lg">
+                Simular Pagamento
+              </button>
+            </form>
+          </div>
+        {% endif %}
+
+      </div>
+    </div>
+
+    <div class="mb-4">
+      <a href="{% url 'order_list' %}" class="btn btn-outline">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+             viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m12 19-7-7 7-7"/>
+          <path d="M19 12H5"/>
+        </svg>
+        Voltar aos Pedidos
+      </a>
+    </div>
+
+  </div>
+</main>
+{% endblock %}

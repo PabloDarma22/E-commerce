@@ -1,0 +1,113 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}STORE{% endblock %}</title>
+
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="container header-inner">
+      <a href="{% url 'home' %}" class="logo">STORE</a>
+
+      <nav class="nav-links">
+        <a href="{% url 'home' %}">Início</a>
+        <a href="{% url 'order_list' %}">Meus Pedidos</a>
+        <a href="{% url 'address_list' %}">Endereços</a>
+      </nav>
+
+      <div class="nav-actions">
+        {% if user.is_authenticated %}
+          <span class="text-muted">Olá, {{ user.username }}</span>
+          <a href="{% url 'logout' %}">Sair</a>
+        {% else %}
+          <a href="{% url 'login' %}">Entrar</a>
+        {% endif %}
+
+        <a href="{% url 'cart_detail' %}" class="cart-link" aria-label="Carrinho">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+               viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="8" cy="21" r="1"/>
+            <circle cx="19" cy="21" r="1"/>
+            <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>
+          </svg>
+
+          {# Badge opcional: só aparece se você passar cart_count no contexto (dá pra fazer depois) #}
+          {% if cart_count and cart_count > 0 %}
+            <span class="cart-badge">{{ cart_count }}</span>
+          {% endif %}
+        </a>
+      </div>
+
+      <button class="menu-toggle" aria-label="Abrir menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- MESSAGES -->
+  {% if messages %}
+    <div class="container messages">
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <!-- PAGE CONTENT -->
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <a href="{% url 'home' %}" class="logo">STORE</a>
+          <p>Sua loja online com os melhores produtos, preços e atendimento. Entrega para todo o Brasil.</p>
+        </div>
+
+        <div class="footer-col">
+          <h4>Institucional</h4>
+          <a href="#">Sobre nós</a>
+          <a href="#">Política de privacidade</a>
+          <a href="#">Termos de uso</a>
+        </div>
+
+        <div class="footer-col">
+          <h4>Atendimento</h4>
+          <a href="#">Central de ajuda</a>
+          <a href="#">Trocas e devoluções</a>
+          <a href="#">Fale conosco</a>
+        </div>
+
+        <div class="footer-col">
+          <h4>Minha Conta</h4>
+          <a href="{% url 'order_list' %}">Meus pedidos</a>
+          <a href="{% url 'address_list' %}">Endereços</a>
+
+          {% if user.is_authenticated %}
+            <a href="{% url 'logout' %}">Sair</a>
+          {% else %}
+            <a href="{% url 'login' %}">Entrar</a>
+            <a href="{% url 'signup' %}">Criar conta</a>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span>{% now "Y" %} STORE. Todos os direitos reservados.</span>
+        <span>Feito com Django + HTML/CSS</span>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
